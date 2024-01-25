@@ -2,7 +2,7 @@
 ### Team Members
 - Kenny Yu
 - Evan Leong
-- Marucs Linture
+- Marcus Linture
 - Kelly Hu 
 - Calvin Nguyen
 
