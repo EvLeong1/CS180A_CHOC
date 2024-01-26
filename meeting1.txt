@@ -1,0 +1,14 @@
+
+Questions for the doctors, meeting for Week 4
+
+- Can we get the data (#1 PRIORITY)
+- What is the end product we are looking for?
+    - What kind of simulation is the expectation?
+- What technologies would you want us to use? What technologies do you use?
+    - Any similar projects done previously that may emulate what we are trying to deliver.
+- What mathematical skills would we need? [Linear algebra, calculus]
+
+- What biological background should we have?
+    - Specifically, terminology in the document provided to us
+- How can we cater this project to doctors?
+    - In an operating room, specifically, what could we provide to help you?
