@@ -12,3 +12,6 @@ Questions for the doctors, meeting for Week 4
     - Specifically, terminology in the document provided to us
 - How can we cater this project to doctors?
     - In an operating room, specifically, what could we provide to help you?
+
+- What are grades of injury?
+- How many people are accessing this product at once? (Scalability?)
