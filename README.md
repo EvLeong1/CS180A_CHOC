@@ -13,3 +13,5 @@ The purpose of this Capstone is to create a dynamic simulation of the rule-based
 ### [Confluence](https://choc180a.atlassian.net/wiki/spaces/CCT/overview)
 
 ### [Jira](https://choc180a.atlassian.net/jira/software/projects/CCT/boards/1)
+
+### [SIPA Calculator](https://www.mdcalc.com/calc/10058/shock-index-pediatric-age-adjusted-sipa)
