@@ -14,6 +14,7 @@
 - PBRC = given blood
 - SIPA
 	- Shock Index Pediatric Adjusted
+	- Varies across age groups
 
 - hemoglobin down = bleeding out (above 7 is good, below not so good)
 
@@ -39,11 +40,13 @@
 ## End Deliverables
 ### Nueral Network 
 - Find cut points
+- Differentiate between injuries
 
 ### Device (Interface)
 - Feed in data (age, heart rate, blood pressure) and it runs the cutpoints for shock
 - Simple Interface
 	- Enter parameters, beeps 
+	- Backend calculates SIPA
 - Beeps when a patient meets shock criteria
 - would eventually want to convert to a phsycial product 
 		
