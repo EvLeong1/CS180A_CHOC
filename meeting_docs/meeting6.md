@@ -26,5 +26,5 @@
 
 
 
-### Items Planned to Discuss Next Time
-    - Discussed meeting times for upcoming weeks and next quarter
+## Items Planned to Discuss Next Time
+- Discussed meeting times for upcoming weeks and next quarter
