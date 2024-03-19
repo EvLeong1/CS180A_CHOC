@@ -19,6 +19,9 @@ function Homepage() {
 
     const [bloodGiven, setBloodGiven] = useState<string>('');
     const [bloodGivenError, setBloodGivenError] = useState<string>('');
+
+    const [showShock, setShowShock] = useState<boolean>(false);
+
   
     const handleAgeChange = (event: any) => {
       const inputAge = event.target.value;
@@ -27,6 +30,7 @@ function Homepage() {
       } else {
         setAgeError('');
       }
+      calculateTotal();
       setAge(inputAge);
     };
 
@@ -37,6 +41,7 @@ function Homepage() {
         } else {
             setSipaError('');
         }
+        calculateTotal();
         setSipa(inputSipa);
     };
 
@@ -47,6 +52,7 @@ function Homepage() {
         } else {
             setHemoglobinError('');
         }
+        calculateTotal();
         setHemoglobin(inputHemoglobin);
     };
 
@@ -57,7 +63,14 @@ function Homepage() {
         } else {
             setBloodGivenError('');
         }
+        calculateTotal();
         setBloodGiven(inputBloodGiven);
+    };
+
+     // Calculate total and show shock if total is over the threshold (placeholder for now)
+     const calculateTotal = () => {
+        const total = Number(age) + Number(sipa) + Number(hemoglobin) + Number(bloodGiven);
+        setShowShock(total > 10);
     };
   
   return (
@@ -135,8 +148,8 @@ function Homepage() {
                     <FormHelperText id="age-error-text">{bloodGivenError}</FormHelperText>
                 </FormControl>
 
-                <div className='bg-blue-200 w-full h-[40%] border border-blue-900 rounded-lg shadow-lg'>
-                    <div className='font-bold text-3xl text-blue-900 p-3 '>Results</div>
+                <div className={`${showShock ? 'bg-red-500' : 'bg-blue-200'} w-full h-[40%] border ${showShock ? 'border-red-900' : 'border-blue-900'} rounded-lg shadow-lg flex p-5`}>
+                    <div className={`font-bold text-3xl text-white`}>{showShock ? 'CHILD IN SHOCK' : 'Results'}</div>
                 </div>
             </div>
 
