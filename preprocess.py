@@ -30,7 +30,7 @@ def graph_change(row):
     plt.plot(graph)
 
 hemoglobin_levels.apply(graph_change, axis=1)
-# plt.show()
+plt.show()
 
 # pd.set_option('display.max_rows', None)  # Uncomment to show all rows
 # Return a standarized dataframe where hb levels are conformed to their post-injury times
@@ -58,33 +58,3 @@ def standarize_hb(dataframe):
     return std_df
 # Print standarized dataframe
 # print(standarize_hb(df))
-
-def modified_dataset(dataframe):
-    df_copy = dataframe.copy()
-    df_copy = df_copy.iloc[:, :-171]
-    del_cols = ['id', 'redcap_data_access_group', 'mo_injury', 'yr_injury', 'demographics_complete', 'hx_trauma',
-                'moi_other', 'admit', 'injury_characteristics_and_admission_complete', 'scores_complete', 'labs_complete',
-                'prbc_24osh', 'prbc_osh', 'prbc_24ptc', 'prbc_ptc', 'ffp_24osh', 'ffp_osh', 'ffp_24ptc', 'ffp_ptc',
-                'platelets_24osh', 'platelets_osh', 'platelets_24ptc', 'platelets_ptc', 'blood_products_complete',
-                'embo_reason', 'embo_type___1', 'embo_type___2', 'embo_type___3', 'embo_type___888', 'embo_other',
-                'embo_tech___1', 'embo_tech___1', 'embo_tech___2', 'embo_tech___3', 'embo_tech___4', 'embo_tech___888',
-                'embo_techother', 'radiology_complete', 'dpl', 'exlap_damage', 'lap_hrs', 'lap_open', 'exlap_lap_purpose',
-                'percu_drain', 'percu_hrs', 'percu_fluid___0', 'percu_fluid___1', 'percu_fluid___2', 'percu_fluid___3',
-                'percu_fluid___4', 'percu_fluid___5', 'percu_fluid___6', 'percu_fluid___7', 'percu_fluid___888',
-                'percu_fluid_other', 'percu_performed', 'percu_performed_other', 'percu_us', 'other_procedure_describe',
-                'procedures_complete', 'missed_ii', 'describe_ii', 'describe_any', 'missed_treatment', 'ards_vent', 'reor_operation',
-                'trans_reaction', 'outcomes_complete']
-    readd_cols = ['hgt', 'bmi', 'firsttemp_ptc', 'lowtemp_ptc']
-
-    df_copy.drop(df_copy.columns[91:165], axis=1, inplace=True)
-    df_copy.drop(columns=del_cols, inplace=True)
-    
-    for col in readd_cols:
-        df_copy[col] = dataframe[col]
-    df_copy.replace('#NULL!', np.nan, inplace=True)
-
-    return pd.concat([df_copy, standarize_hb(df)], axis=1)
-
-new_dataset = modified_dataset(df)
-new_dataset.to_csv('modified_dataset.csv', index=False)
-new_dataset.to_excel('modified_dataset.xlsx', index=False)
