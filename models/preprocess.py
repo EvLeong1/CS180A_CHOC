@@ -62,7 +62,7 @@ def standarize_hb(dataframe):
 def modified_dataset(dataframe):
     df_copy = dataframe.copy()
     df_copy = df_copy.iloc[:, :-171]
-    del_cols = ['id', 'redcap_data_access_group', 'mo_injury', 'yr_injury', 'demographics_complete', 'hx_trauma',
+    del_cols = ['id', 'redcap_data_access_group', 'mo_injury', 'yr_injury', 'demographics_complete', 'hxtrauma_days',
                 'moi_other', 'admit', 'injury_characteristics_and_admission_complete', 'scores_complete', 'labs_complete',
                 'prbc_24osh', 'prbc_osh', 'prbc_24ptc', 'prbc_ptc', 'ffp_24osh', 'ffp_osh', 'ffp_24ptc', 'ffp_ptc',
                 'platelets_24osh', 'platelets_osh', 'platelets_24ptc', 'platelets_ptc', 'blood_products_complete',
@@ -73,7 +73,10 @@ def modified_dataset(dataframe):
                 'percu_fluid___4', 'percu_fluid___5', 'percu_fluid___6', 'percu_fluid___7', 'percu_fluid___888',
                 'percu_fluid_other', 'percu_performed', 'percu_performed_other', 'percu_us', 'other_procedure_describe',
                 'procedures_complete', 'missed_ii', 'describe_ii', 'describe_any', 'missed_treatment', 'ards_vent', 'reor_operation',
-                'trans_reaction', 'outcomes_complete']
+                'trans_reaction', 'outcomes_complete', 'time_ed', 'sbp_lowed', 'dbp_lowed', 'hr_lowed', 'hr_highed', 'vasos_other', 
+                'which_ed___888', 'vitals_complete', 'transfusion_hrs', 'transfusion_local', 'fast_results', 'exlap_hrs', 'procedure_other',
+                'describe_iai', 'describe_treatment', 'comps_other', 'infection_other', 'cause_death', 'cause_other', 'stable_notprotocol',
+                'stable_deviation', 'stable_deviation_describe']
     readd_cols = ['hgt', 'bmi', 'firsttemp_ptc', 'lowtemp_ptc']
 
     df_copy.drop(df_copy.columns[91:165], axis=1, inplace=True)
