@@ -30,7 +30,6 @@ def fill_other_cols(dataframe):
         if pd.isnull(i) or i == 888.0 or i == 999.0:
             vaso_hrs[ind] =  0
     dataframe['vaso_hrs'] = vaso_hrs
-
     return
 
 def fill_hx_trauma(dataframe):
@@ -75,7 +74,32 @@ def fill_stable_unstable_cols(dataframe):
             dataframe.loc[index, stable_elems] = 0
     return
 
+def fill_hb(dataframe):
+    hb = dataframe.iloc[:, dataframe.columns.get_loc('hb_0-4.99'):]
+    print(dataframe.columns.get_loc('hb_0-4.99'))
+    for ind, row in hb.iterrows():
+        rates = []
+        for num, i in enumerate(row):
+            if pd.notnull(i):
+                rates.append((i, num))
+        if len(rates)<=1:
+            pass
+        else:
+            for i in range(len(rates)-1):
+                # unpack
+                val1, ind1 = rates[i]
+                val2, ind2 = rates[i+1]
+                if ind2 - ind1 > 1:
+                    roc = (val2 - val1)/(ind2 - ind1)
+                    running = val1
+                    for cols in range(ind1+1, ind2):
+                        running += roc
+                        dataframe.iloc[ind, dataframe.columns.get_loc('hb_0-4.99')+cols] = np.round(running, 2)
+    return
+
 fill_time_to_angio(df)
 fill_other_cols(df)
 fill_hx_trauma(df)
+fill_hb(df)
+df.to_excel('modified_dataset.xlsx', index=False)
 # fill_stable_unstable_cols(df)
