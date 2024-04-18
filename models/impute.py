@@ -33,6 +33,19 @@ def fill_other_cols(dataframe):
 
     return
 
+def fill_hx_trauma(dataframe):
+    # hx_trauma
+    dataframe.loc[dataframe['hx_trauma'] == 888, 'hx_trauma'] = 0
+
+    # or
+    # hx_trauma = dataframe['hx_trauma']
+    # for ind, i in enumerate(hx_trauma):
+    #     if i == 888:
+    #         hx_trauma[ind] = 0
+    # dataframe['hx_trauma'] = hx_trauma
+
+    return
 
 fill_time_to_angio(df)
 fill_other_cols(df)
+fill_hx_trauma(df)
