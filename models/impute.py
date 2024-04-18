@@ -45,7 +45,37 @@ def fill_hx_trauma(dataframe):
     # dataframe['hx_trauma'] = hx_trauma
 
     return
+'''
+Loop through each patient row. If the patient's pt_status
+is 1, fill unstable columns as 0. If the patient's pt_status
+is 2, fill stable columns as 0.
+'''
+def fill_stable_unstable_cols(dataframe):
+    # loop through each patient row
+    # if the patient[pt_status] = 1, fill unstable cols as 0
+    # if the patient[pt_status] = 2, fill stable cols as 0
+    stable_elems = [
+    'stable_typescreen', 'stable_nonicu',
+    'stable_q2h_q4h', 'stable_bedrest',
+    'stable_hb6', 'stable_hb12',
+    'stable_hb24', 'stable_floor',
+    'stable_diet', 'stable_ambulate',
+    'stable_tounstable', 'stable_dcprotocol'
+    ]
+    unstable_elems = [
+    'unstable_typescreen', 'unstable_crystalloid', 
+    'unstable_picu', 'unstable_q6h', 
+    'unstable_transfusion',	'unstable_notthreshold', 
+    'unstable_rebleed', 'unstable_txprotocol']
+
+    for index, row in dataframe.iterrows():
+        if row['pt_status'] == 1:  # stable
+            dataframe.loc[index, unstable_elems] = 0
+        elif row['pt_status'] == 2:  # unstable
+            dataframe.loc[index, stable_elems] = 0
+    return
 
 fill_time_to_angio(df)
 fill_other_cols(df)
 fill_hx_trauma(df)
+# fill_stable_unstable_cols(df)
