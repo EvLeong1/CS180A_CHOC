@@ -3,6 +3,11 @@ import numpy as np
 
 df = pd.read_excel('modified_dataset.xlsx')
 
+'''
+The most critical time for angiography is the first 7 hours. To capture this,
+out of the patients that have angiography data, if they have angiography performed on them within
+the first 7 hours, we impute the value as 1, else 0.
+'''
 def fill_time_to_angio(dataframe):
     angio = dataframe.iloc[:, 0]
     angio = angio.replace({-888: np.nan})
@@ -14,6 +19,11 @@ def fill_time_to_angio(dataframe):
     dataframe['time_to_angio'] = angio
     return
 
+'''
+The other_elem column contains specific data on injuries suffered. If there is extra data on injuries,
+we wanted to capture that by imputing a value of 1, else 0.
+For the vaso_hrs column, all NULL values are filled with 0.
+'''
 def fill_other_cols(dataframe):
     # other_elem
     other_elem = dataframe['other_elem']
@@ -27,6 +37,7 @@ def fill_other_cols(dataframe):
     # vaso_hrs
     vaso_hrs = dataframe['vaso_hrs']
     for ind, i in enumerate(vaso_hrs):
+        # NULL, 888 (unknown), 999 (indeterminate)
         if pd.isnull(i) or i == 888.0 or i == 999.0:
             vaso_hrs[ind] =  0
     dataframe['vaso_hrs'] = vaso_hrs
@@ -74,24 +85,29 @@ def fill_stable_unstable_cols(dataframe):
             dataframe.loc[index, stable_elems] = 0
     return
 
+'''
+During the preprocessing stage, hb (hemoglobin) and time columns were combined to capture intervals in a concise manner.
+For any NULL values between two intervals, values were imputed by first calculating the rate of change (roc)
+of hb values between the intervals. Then, each NULL cell is filled by incrementing the previous hb by the roc.
+'''
 def fill_hb(dataframe):
+    #Only use hb interval cols
     hb = dataframe.iloc[:, dataframe.columns.get_loc('hb_0-4.99'):]
-    print(dataframe.columns.get_loc('hb_0-4.99'))
     for ind, row in hb.iterrows():
-        rates = []
+        rates = [] # Where non null values for each row are stored
         for num, i in enumerate(row):
             if pd.notnull(i):
-                rates.append((i, num))
-        if len(rates)<=1:
+                rates.append((i, num)) # A tuple of (hb_value, index) is appended to the rates list
+        if len(rates)<=1: # If there are less than 2 values in each row, no need to do anything
             pass
         else:
             for i in range(len(rates)-1):
-                # unpack
-                val1, ind1 = rates[i]
+                # Unpack tuples for index i and i+1
+                val1, ind1 = rates[i] 
                 val2, ind2 = rates[i+1]
-                if ind2 - ind1 > 1:
-                    roc = (val2 - val1)/(ind2 - ind1)
-                    running = val1
+                if ind2 - ind1 > 1: # If there are null values between two intervals...
+                    roc = (val2 - val1)/(ind2 - ind1) # Calculate the rate of change
+                    running = val1 # Then create a running variable and continue adding the rate of change
                     for cols in range(ind1+1, ind2):
                         running += roc
                         dataframe.iloc[ind, dataframe.columns.get_loc('hb_0-4.99')+cols] = np.round(running, 2)
@@ -101,5 +117,5 @@ fill_time_to_angio(df)
 fill_other_cols(df)
 fill_hx_trauma(df)
 fill_hb(df)
-df.to_excel('modified_dataset.xlsx', index=False)
+# df.to_excel('modified_dataset.xlsx', index=False)
 # fill_stable_unstable_cols(df)
