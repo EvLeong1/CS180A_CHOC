@@ -113,9 +113,58 @@ def fill_hb(dataframe):
                         dataframe.iloc[ind, dataframe.columns.get_loc('hb_0-4.99')+cols] = np.round(running, 2)
     return
 
+
+'''
+Combine the target columns into a single column called 'target', which helps the model classify patients into two groups: 
+those who need surgery and those who do not.
+'''
+def combine_target_cols(dataframe):
+    target_cols = ['exlap', 'lap', 'liver_ctblush', 'spleen_ctblush']
+    dataframe['target'] = dataframe[target_cols].apply(lambda row: 1 if 1 in row.values else 0, axis=1)
+    dataframe.drop(columns=target_cols, inplace=True)
+    return dataframe
+
+
+'''
+Fill all NULL values with 888 for the model to run properly since the model cannot handle NULL values.
+'''
+
+def fill_null_values(dataframe, fill_value=888):
+    dataframe.fillna(fill_value, inplace=True)
+    return dataframe
+
+
+def check_for_death(dataframe):
+    dataframe['unstable_notprotocol_other'] = dataframe['unstable_notprotocol_other'].apply(
+        lambda x: 1 if x == 'death' else 888 if pd.isna(x) else 0 if x == '888' else 0
+    )
+    
+def replace_unk(dataframe):
+    dataframe.replace('unk', 888, inplace=True)
+    return dataframe
+
+def convert_all_to_float(dataframe):
+    problematic_columns = []
+    for col in dataframe.columns:
+        try:
+            pd.to_numeric(dataframe[col], errors='raise')
+        except ValueError:
+            problematic_columns.append(col)
+
+    for col in problematic_columns:
+        dataframe[col] = pd.to_numeric(dataframe[col], errors='coerce')
+
+    dataframe[problematic_columns] = dataframe[problematic_columns].fillna(888).astype(float)
+
+
 fill_time_to_angio(df)
 fill_other_cols(df)
 fill_hx_trauma(df)
 fill_hb(df)
-# df.to_excel('modified_dataset.xlsx', index=False)
-# fill_stable_unstable_cols(df)
+combine_target_cols(df)
+fill_stable_unstable_cols(df)
+fill_null_values(df)
+check_for_death(df)
+replace_unk(df)
+convert_all_to_float(df)
+df.to_excel('imputed_dataset.xlsx', index=False)
