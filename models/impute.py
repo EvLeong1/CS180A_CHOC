@@ -128,29 +128,29 @@ def fill_iss_cols(dataframe):
     ais_extremity = dataframe['ais_extremity']
     ais_external = dataframe['ais_external']
 
-    dataframe['iss'].fillna(0, inplace=True)
-    dataframe['ais_head'].fillna(0, inplace=True)
-    dataframe['ais_chest'].fillna(0, inplace=True)
-    dataframe['ais_face'].fillna(0, inplace=True)
-    dataframe['ais_abdomen'].fillna(0, inplace=True)
-    dataframe['ais_extremity'].fillna(0, inplace=True)
-    dataframe['ais_external'].fillna(0, inplace=True)
+    # dataframe['iss'].fillna(0, inplace=True)
+    # dataframe['ais_head'].fillna(0, inplace=True)
+    # dataframe['ais_chest'].fillna(0, inplace=True)
+    # dataframe['ais_face'].fillna(0, inplace=True)
+    # dataframe['ais_abdomen'].fillna(0, inplace=True)
+    # dataframe['ais_extremity'].fillna(0, inplace=True)
+    # dataframe['ais_external'].fillna(0, inplace=True)
 
-    dataframe['iss'].replace(888.0, 0, inplace=True)
-    dataframe['ais_head'].replace(888.0, 0, inplace=True)
-    dataframe['ais_chest'].replace(888.0, 0, inplace=True)
-    dataframe['ais_face'].replace(888.0, 0, inplace=True)
-    dataframe['ais_abdomen'].replace(888.0, 0, inplace=True)
-    dataframe['ais_extremity'].replace(888.0, 0, inplace=True)
-    dataframe['ais_external'].replace(888.0, 0, inplace=True)
+    # dataframe['iss'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_head'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_chest'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_face'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_abdomen'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_extremity'].replace(888.0, 0, inplace=True)
+    # dataframe['ais_external'].replace(888.0, 0, inplace=True)
 
-    dataframe['iss'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_head'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_chest'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_face'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_abdomen'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_extremity'].replace(8888.0, 0, inplace=True)
-    dataframe['ais_external'].replace(8888.0, 0, inplace=True)
+    # dataframe['iss'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_head'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_chest'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_face'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_abdomen'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_extremity'].replace(8888.0, 0, inplace=True)
+    # dataframe['ais_external'].replace(8888.0, 0, inplace=True)
 
     selected_section = dataframe.loc[start_row:end_row, start_col:end_col]
     for column in dataframe.columns:
@@ -192,7 +192,7 @@ def fill_iss_cols(dataframe):
     dataframe['ais_external'] = ais_external
 
     for i, row in selected_section.iterrows():
-        print(f"Row {i}: ")
+        #print(f"Row {i}: ")
         for col, value in row.items():
             if col == selected_section.columns[0]:
                 if pd.isnull(i) or i == 888.0:
@@ -200,7 +200,7 @@ def fill_iss_cols(dataframe):
                     iss_cols[i] = curr_iss
                 curr_iss = value
                 continue
-            print(f"Column {col}: {value}")
+            #print(f"Column {col}: {value}")
         top3_values = dataframe.apply(lambda row: row.nlargest(3).tolist(), axis=1)
         curr_sum_of_three = sum(x ** 2 for sublist in top3_values for x in sublist if x is not None)
 
@@ -223,7 +223,7 @@ def combine_target_cols(dataframe):
 Fill all NULL values with 888 for the model to run properly since the model cannot handle NULL values.
 '''
 
-def fill_null_values(dataframe, fill_value=888):
+def fill_null_values(dataframe, fill_value=0):
     dataframe.fillna(fill_value, inplace=True)
     return dataframe
 
@@ -235,6 +235,11 @@ def check_for_death(dataframe):
     
 def replace_unk(dataframe):
     dataframe.replace('unk', 888, inplace=True)
+    return dataframe
+
+def fill_999(dataframe):
+    dataframe.replace(999, 0, inplace=True)
+    dataframe.replace(999.0, 0, inplace=True)
     return dataframe
 
 def convert_all_to_float(dataframe):
@@ -261,5 +266,6 @@ fill_stable_unstable_cols(df)
 fill_null_values(df)
 check_for_death(df)
 replace_unk(df)
+fill_999(df)
 convert_all_to_float(df)
 df.to_excel('imputed_dataset.xlsx', index=False)

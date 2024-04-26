@@ -29,7 +29,7 @@ def graph_change(row):
             graph.append((row[i], row[j]))
     plt.plot(graph)
 
-hemoglobin_levels.apply(graph_change, axis=1)
+#hemoglobin_levels.apply(graph_change, axis=1)
 # plt.show()
 
 # pd.set_option('display.max_rows', None)  # Uncomment to show all rows
