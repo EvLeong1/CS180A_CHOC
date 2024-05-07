@@ -15,6 +15,8 @@ misclass_data = pd.read_excel('misclassified_data.xlsx')
 #           original_data row number = 12
 
 
+''' ------------------'''
+''' Input Values Here '''
 # Enter desired row(s) (can be from the index column of misclassified_data.xlsx)
 index_columns = [10, 12]
 
@@ -27,10 +29,17 @@ features = ['gender','age','wgt']
 # Set which dataset we want the resulting values from (can be both)
 original = True
 imputed = True
+''' ------------------'''
 
 
 # Helper functions
 def get_results():
+    ''' Gets desired features from each row
+        
+        Output:
+        (dict, dict) where
+        dict[(index,feature)] = value
+    '''
     # initialize dicts
     original_dict = {}
     imputed_dict = {}
@@ -93,7 +102,6 @@ def export_to_excel(data_dict, filename):
         results_df.at[i, feature] = value
         #print("Adding",feature,"to",new_index,"with",value,"at row",i)
         
-
     # export to excel
     results_df.to_excel(filename, index=False)
 
