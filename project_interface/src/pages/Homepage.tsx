@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import '../styles/Homepage.css';
 import Topbar from '../components/Topbar';
-import TextField from '@mui/material/TextField';
+// import TextField from '@mui/material/TextField';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import axios from 'axios';
 
 function Homepage() {
     const [age, setAge] = useState<string>('');
@@ -21,6 +21,9 @@ function Homepage() {
     const [bloodGivenError, setBloodGivenError] = useState<string>('');
 
     const [showShock, setShowShock] = useState<boolean>(false);
+
+    const [prediction, setPrediction] = useState(null);
+
 
   
     const handleAgeChange = (event: any) => {
@@ -72,6 +75,23 @@ function Homepage() {
         const total = Number(age) + Number(sipa) + Number(hemoglobin) + Number(bloodGiven);
         setShowShock(total > 10);
     };
+
+    
+
+    const handleSubmit = async () => {
+        try {
+            const response = await axios.post('http://localhost:5000/predict', {
+                age: age,
+                sipa: sipa,
+                hemoglobin: hemoglobin,
+                bloodGiven: bloodGiven
+            });
+
+            setPrediction(response.data.prediction);
+        } catch (error) {
+            console.error('Error predicting:', error);
+        }
+    };
   
   return (
       <div className='h-full w-full flex flex-col items-center justify-between'>
@@ -81,7 +101,7 @@ function Homepage() {
             {/* Input container */}
 
             <div className='w-[60%] h-full flex flex-col items-center gap-2'>
-                <div className='text-5xl font-bold drop-shadow-2xl mb-5 '>Shock Index </div>
+                <div className='text-5xl font-bold drop-shadow-2xl mb-5 '>Pediatric Intervention</div>
 
                 <FormControl sx={{ m: 1, width: 'full' }} variant="filled" fullWidth error={!!ageError}>
                     <InputLabel htmlFor="filled-adornment-password">Age</InputLabel>
@@ -147,6 +167,9 @@ function Homepage() {
                     />
                     <FormHelperText id="age-error-text">{bloodGivenError}</FormHelperText>
                 </FormControl>
+                <Button variant="contained" onClick={handleSubmit}>
+                Submit
+                </Button>
 
                 <div className={`${showShock ? 'bg-red-500' : 'bg-blue-200'} w-full h-[40%] border ${showShock ? 'border-red-900' : 'border-blue-900'} rounded-lg shadow-lg flex p-5`}>
                     <div className={`font-bold text-3xl text-white`}>{showShock ? 'CHILD IN SHOCK' : 'Results'}</div>
@@ -206,7 +229,19 @@ function Homepage() {
                     </Accordion>
                 </div>
                 <div className='flex flex-row justify-center h-full rounded-lg p-3 border border-gray-500 shadow-lg'>
-                    <div className='font-semibold text-2xl text-gray-900'>Relevant Links</div>
+                    <div className='font-semibold text-2xl text-gray-900 flex flex-col  items-center gap-5'>
+                        <p>Relevant Links</p>
+                        <ul className='flex flex-col gap-2'>
+                            <li className='text-sm flex flex-row items-center justify-between gap-5'>
+                                <p>Project GitHub</p>
+                                <a href="https://github.com/EvLeong1/CS180A_CHOC" className='text-blue-300'>https://github.com/EvLeong1/CS180A_CHOC</a>
+                            </li>
+                            <li className='text-sm flex flex-row items-center justify-between gap-5'>
+                                <p>LNN Research</p>
+                                <a href="https://arxiv.org/abs/2003.04630" className='text-blue-300'>https://arxiv.org/abs/2003.04630</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
