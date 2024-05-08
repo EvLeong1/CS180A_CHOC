@@ -128,30 +128,6 @@ def fill_iss_cols(dataframe):
     ais_extremity = dataframe['ais_extremity']
     ais_external = dataframe['ais_external']
 
-    # dataframe['iss'].fillna(0, inplace=True)
-    # dataframe['ais_head'].fillna(0, inplace=True)
-    # dataframe['ais_chest'].fillna(0, inplace=True)
-    # dataframe['ais_face'].fillna(0, inplace=True)
-    # dataframe['ais_abdomen'].fillna(0, inplace=True)
-    # dataframe['ais_extremity'].fillna(0, inplace=True)
-    # dataframe['ais_external'].fillna(0, inplace=True)
-
-    # dataframe['iss'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_head'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_chest'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_face'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_abdomen'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_extremity'].replace(888.0, 0, inplace=True)
-    # dataframe['ais_external'].replace(888.0, 0, inplace=True)
-
-    # dataframe['iss'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_head'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_chest'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_face'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_abdomen'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_extremity'].replace(8888.0, 0, inplace=True)
-    # dataframe['ais_external'].replace(8888.0, 0, inplace=True)
-
     selected_section = dataframe.loc[start_row:end_row, start_col:end_col]
     for column in dataframe.columns:
         dataframe[column] = pd.to_numeric(dataframe[column], errors='coerce')
@@ -213,7 +189,8 @@ Combine the target columns into a single column called 'target', which helps the
 those who need surgery and those who do not.
 '''
 def combine_target_cols(dataframe):
-    target_cols = ['exlap', 'lap', 'liver_ctblush', 'spleen_ctblush']
+    # target_cols = ['exlap', 'lap', 'liver_ctblush', 'spleen_ctblush']
+    target_cols = ['exlap', 'lap']
     dataframe['target'] = dataframe[target_cols].apply(lambda row: 1 if 1 in row.values else 0, axis=1)
     dataframe.drop(columns=target_cols, inplace=True)
     return dataframe
