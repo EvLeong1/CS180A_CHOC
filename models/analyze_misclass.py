@@ -18,16 +18,18 @@ misclass_data = pd.read_excel('misclassified_data.xlsx')
 ''' ------------------'''
 ''' Input Values Here '''
 # Enter desired row(s) (can be from the index column of misclassified_data.xlsx)
-index_columns = [10, 12]
+index_columns = [27,32,220,479,588,642,688,696,730,908]
 
 # Enter name(s) of desired feature(s) from capstone_dataset.xlsx and/or imputed_dataset.xlsx
 #   (Code will ignore missing column names 
 #    i.e. no "target" column in captstone_dataset
 #    or   no "exlap"  column in imputed_data)
-features = ['gender','age','wgt']
+features = ['target','iss','procedure___1', 'procedure___2', 'procedure___3', 'procedure___4', 'procedure___5', 'procedure___6', 'procedure___7',
+            'procedure___8', 'procedure___9', 'procedure___10', 'procedure___11', 'procedure___12', 'procedure___0','spleen_ctblush','spleen_grade','liver_ctblush','liver_grade',
+            'unstable_ed_or','los_floor']
 
 # Set which dataset we want the resulting values from (can be both)
-original = True
+original = False
 imputed = True
 ''' ------------------'''
 
@@ -57,7 +59,7 @@ def get_results():
             if imputed:
                 # check if feat is a column in imputed_data
                 if feat in imputed_columns:
-                    imputed_dict[(i,feat)] = original_data.at[i,feat]
+                    imputed_dict[(i,feat)] = imputed_data.at[i,feat]
 
     return original_dict, imputed_dict
 
