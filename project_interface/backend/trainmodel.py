@@ -1,65 +1,115 @@
-import tensorflow as tf
-from tensorflow import keras
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, BatchNormalization
-from keras.optimizers import Adam
-from keras.callbacks import EarlyStopping
-from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.neural_network import MLPClassifier
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.tree import export_graphviz
+import pydotplus
+from IPython.display import Image
+import seaborn as sns
+
 import pickle
 
 df = pd.read_excel("imputed_dataset.xlsx")
-
 # Define features (X) and target variable (y)
+
+test_df = df.sample(n=100, random_state=42)
+df = df.drop(test_df.index)
+test_df = test_df.copy()
+
+test_df_X = test_df.drop("target", axis=1)
+test_df_y = test_df["target"]
+
 X = df.drop("target", axis=1)
 y = df["target"]
+# Define the number of features# Importing necessary libraries
 
-# Define the number of features
-num_features = len(df.columns) - 1
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize the DecisionTreeClassifier
+dtree = DecisionTreeClassifier()
+
+# Fit the model on the training data
+dtree.fit(X_train, y_train)
+
+# Make predictions on the testing data
+y_pred = dtree.predict(X_test)
+
+
+
+# --- Getting misclassifications ---
+
+# Resulting classifications
+results_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+
+# Getting rows that were misclassified
+misclassified_indices = results_df.index[results_df['Actual'] != results_df['Predicted']]
+misclassified_data = df.loc[misclassified_indices]
+
+# add indices to the table
+misclassified_data['index'] = misclassified_indices
+# sort by indices
+misclassified_data = misclassified_data.sort_values(by='index')
+# export to excel
+misclassified_data.to_excel("misclassified_data.xlsx", index=False)
+
+
+# Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-# Model definition
-model = Sequential([
-    Dense(256, input_dim=num_features, activation='relu'),
-    BatchNormalization(),
-    Dense(512, activation='relu'),
-    Dropout(0.45),
-    BatchNormalization(),
-    Dense(256, activation='relu'),
-    Dropout(0.45),
-    BatchNormalization(),
-    Dense(128, activation='relu'),
-    Dropout(0.45),
-    BatchNormalization(),
-    Dense(64, activation='relu'),
-    Dropout(0.45),
-    BatchNormalization(),
-    Dense(1, activation='sigmoid')
-])
+rf_classifier = RandomForestClassifier(n_estimators=150,
+                                       criterion='gini',
+                                       max_depth=15,
+                                       min_samples_split=2,
+                                       min_samples_leaf=1,
+                                       bootstrap=True,
+                                       random_state=42)
 
-model.summary()
+kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
-opt = Adam(learning_rate=0.001)
-model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+cv_scores = cross_val_score(rf_classifier, X, y, cv=kf)
 
-# Define early stopping to prevent overfitting
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+print("Cross-validation scores:", cv_scores)
 
-# Train the model with k-fold cross-validation
-kf = KFold(n_splits=5, shuffle=True, random_state=42)
-for train_index, val_index in kf.split(X_train):
-    X_train_fold, X_val_fold = X_train.iloc[train_index], X_train.iloc[val_index]
-    y_train_fold, y_val_fold = y_train.iloc[train_index], y_train.iloc[val_index]
+# Fit the model on the training data
+rf_classifier.fit(X, y)
 
-    history = model.fit(X_train_fold, y_train_fold, epochs=100, batch_size=64,
-                        validation_data=(X_val_fold, y_val_fold), callbacks=[early_stopping])
+# Make predictions on the testing data
+y_pred = rf_classifier.predict(X)
 
-# Evaluate the model on the test set
-loss, accuracy = model.evaluate(X_test, y_test)
-print("Test Loss:", loss)
-print("Test Accuracy:", accuracy)
+feature_importances = pd.DataFrame({'Feature': X.columns, 'Importance': rf_classifier.feature_importances_})
+
+# Sort feature importances by importance score
+feature_importances = feature_importances.sort_values('Importance', ascending=False)
+print(feature_importances)
+
+
+# Resulting classifications
+results_df = pd.DataFrame({'Actual': y, 'Predicted': y_pred})
+
+# Getting rows that were misclassified
+misclassified_indices = results_df.index[results_df['Actual'] != results_df['Predicted']]
+misclassified_data = df.loc[misclassified_indices]
+
+# add indices to the table
+misclassified_data['index'] = misclassified_indices
+# sort by indices
+misclassified_data = misclassified_data.sort_values(by='index')
+# export to excel
+misclassified_data.to_excel("misclassified_data.xlsx", index=False)
 
 # Save the trained model to a pickle file
 with open('my_trained_model.pkl', 'wb') as f:
-    pickle.dump(model, f)
+    pickle.dump(rf_classifier, f)
