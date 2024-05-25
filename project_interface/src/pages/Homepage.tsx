@@ -6,6 +6,7 @@ import Topbar from '../components/Topbar';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
+import Link from '@mui/material/Link';
 
 function Homepage() {
     const [age, setAge] = useState<string>('');
@@ -243,8 +244,9 @@ function Homepage() {
                 Details
                 </AccordionSummary>
                 <AccordionDetails>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                malesuada lacus ex, sit amet blandit leo lobortis eget.
+                Our task is to convert a well-known, static decision algorithm into a dynamic machine learning model 
+                which classifies whether a child experiencing blunt trauma in their solid organs requires surgery, 
+                mimicking clinical emergency decision making in real time to boost physician confidence.
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -256,8 +258,9 @@ function Homepage() {
                 Algorithm
                 </AccordionSummary>
                 <AccordionDetails>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                malesuada lacus ex, sit amet blandit leo lobortis eget.
+                Our algorithm mimics the ATOMAC guidelines that clinicians use in order to determine the need for
+                operative intervention in cases of liver and spleen blunt force trauma. For more information follow <br></br> 
+                 <Link href="https://www.sciencedirect.com/science/article/pii/S0022346818306584">this link</Link>.
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -266,16 +269,14 @@ function Homepage() {
                 aria-controls="panel3-content"
                 id="panel3-header"
                 >
-                Neural Network
+                Variable Selection
                 </AccordionSummary>
                 <AccordionDetails>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                malesuada lacus ex, sit amet blandit leo lobortis eget.
+                Through training of random forests and bagging, information gain was calculated to determine
+                which features had the most impact in determining clinical intervention. The variables to the left 
+                were deemed to be the most important, which include Length of Stay, MTP, Hemoglobin Levels, Systolic 
+                Blood Pressure, and Diastolic Blood Pressure.
                 </AccordionDetails>
-                <AccordionActions>
-                    <Button>Cancel</Button>
-                    <Button>Agree</Button>
-                </AccordionActions>
             </Accordion>
         </div>
         <div className='flex flex-row justify-center h-full rounded-lg p-3 border border-gray-500 shadow-lg'>

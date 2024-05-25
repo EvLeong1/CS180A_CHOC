@@ -189,10 +189,18 @@ Combine the target columns into a single column called 'target', which helps the
 those who need surgery and those who do not.
 '''
 def combine_target_cols(dataframe):
-    # target_cols = ['exlap', 'lap', 'liver_ctblush', 'spleen_ctblush']
-    target_cols = ['exlap', 'lap']
+    target_cols = ['exlap', 'lap', 'procedure___2', 'procedure___3', 'procedure___4', 'procedure___5', 'procedure___7', 'procedure___8', 'procedure___9', 'procedure___10']
     dataframe['target'] = dataframe[target_cols].apply(lambda row: 1 if 1 in row.values else 0, axis=1)
     dataframe.drop(columns=target_cols, inplace=True)
+    return dataframe
+
+'''
+Get rid of the other procedure columns that are not a part of the target, since it reveals if a procedure was done or not. 
+We want to have the model take a naiive approach.
+'''
+def remove_procedure_cols(dataframe):
+    proc_cols = ['procedure___0', 'procedure___1', 'procedure___6', 'procedure___11', 'procedure___12']
+    dataframe.drop(columns=proc_cols, inplace=True)
     return dataframe
 
 
@@ -244,5 +252,6 @@ fill_null_values(df)
 check_for_death(df)
 replace_unk(df)
 fill_999(df)
+remove_procedure_cols(df)
 convert_all_to_float(df)
 df.to_excel('imputed_dataset.xlsx', index=False)
