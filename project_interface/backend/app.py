@@ -19,7 +19,7 @@ else:
 
 DEFAULT_VALUE = 888
 
-
+    
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -34,40 +34,68 @@ def predict():
     print(data)
     
     # Create an array filled with the default value
-    # input_data = np.full(total_features, DEFAULT_VALUE)
+    input_data = np.full(total_features, DEFAULT_VALUE)
     
     # # Set specific features manually using the feature names
-    # feature_name_list = loaded_model.feature_names_in_
-    # # print(feature_name_list)
-    # index = 0
-    # for feature_name in feature_name_list:
-    #     if feature_name == 'procedure___0':
-    #         input_data[index] = data['procedure___0']
-    #     elif feature_name == 'procedure___12':
-    #         input_data[index] = data['procedure___12']
-    #     elif feature_name == 'procedure___2':
-    #         input_data[index] = data['procedure___2']
-    #     elif feature_name == 'procedure___8':
-    #         input_data[index] = data['procedure___8']
-    #     elif feature_name == 'procedure___7':
-    #         input_data[index] = 0
+    feature_name_list = loaded_model.feature_names_in_
+    # print(feature_name_list)
+    
+    
+     # Calculate the rate of change for hemoglobin
+    initial_hb = int(data['initial_hb'])
+    current_hb = int(data['current_hb'])
+    hours_admit = int(data['hours_admit'])
+    
+    if initial_hb is not None and current_hb is not None and hours_admit is not None:
+        rate_of_change = (current_hb - initial_hb) / ((hours_admit/5)-1)
+        running_roc = initial_hb
+        # print(rate_of_change)
         
-    #     index += 1
+        index = feature_name_list.tolist().index('hb_0-4.99')
+        for i in range(0, round(hours_admit/5)):
+            if i == 0:
+                print("Initial HB: ", initial_hb)
+                input_data[index] = initial_hb
+                index+=1
+            else:
+                input_data[index] = running_roc + rate_of_change
+                running_roc = running_roc + rate_of_change
+                index+=1
+                
+            
+                
+                
+    index = 0
+    for feature_name in feature_name_list:
+        if feature_name == 'los_floor':
+            input_data[index] = data['los_floor']
+        elif feature_name == 'mtp':
+            input_data[index] = data['mtp']
+        elif feature_name == 'sbp_lowptc':
+            input_data[index] = data['sbp_low']
+        elif feature_name == 'dbp_lowptc':
+            input_data[index] = data['dbp_low']
+    
+            
+        
+        index += 1
             
  
-    # # print(input_data)
+    # print(input_data)
 
     # # Make a prediction
-    # try:
-    #     prediction = loaded_model.predict(input_data.reshape(1, -1))[0]
+    try:
+        prediction = loaded_model.predict(input_data.reshape(1, -1))[0]
         
-    # except Exception as e:
-    #     return jsonify({'error': f'Error making prediction: {str(e)}'}), 500
-    # print("Prediction: ", prediction)
-    # print("Prediction Prob: ", loaded_model.predict_proba(input_data.reshape(1, -1))[0])
-    # prediction_prob = loaded_model.predict_proba(input_data.reshape(1, -1))[0]
-    # return jsonify({'prediction_class0': prediction_prob[0], 'prediction_class1': prediction_prob[1]})
-    return jsonify({"prediction": data})
+        
+    except Exception as e:
+        return jsonify({'error': f'Error making prediction: {str(e)}'}), 500
+    print("Prediction: ", prediction)
+    print("Prediction Prob: ", loaded_model.predict_proba(input_data.reshape(1, -1))[0])
+    prediction_prob = loaded_model.predict_proba(input_data.reshape(1, -1))[0]
+    return jsonify({'prediction_class0': prediction_prob[0], 'prediction_class1': prediction_prob[1]})
+    
+    # return jsonify({"prediction": data})
 
 
 if __name__ == '__main__':

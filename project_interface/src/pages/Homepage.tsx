@@ -8,6 +8,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
 import Link from '@mui/material/Link';
 
+type Prediction = {
+    prediction_class0: number;
+    prediction_class1: number;
+}
+
 function Homepage() {
     const [age, setAge] = useState<string>('');
     const [ageError, setAgeError] = useState<string>('');
@@ -29,7 +34,7 @@ function Homepage() {
 
 
     const [showShock, setShowShock] = useState<boolean>(false);
-    const [prediction, setPrediction] = useState<string>('');
+    const [prediction, setPrediction] = useState<Prediction>({prediction_class0: 0, prediction_class1: 0});
     
 
     //  // Calculate total and show shock if total is over the threshold (placeholder for now)
@@ -55,8 +60,8 @@ function Homepage() {
                 dbp_high: dbp_high
             });
 
-            setPrediction(response.data.prediction);
-            console.log('Prediction:', response.data.prediction);
+            setPrediction(response.data);
+            console.log('Prediction:', response.data);
         } catch (error) {
             console.error('Error predicting:', error);
         }
@@ -225,7 +230,8 @@ function Homepage() {
 
                 {prediction && (
                     <div className='w-full mt-4'>
-                        <p className='text-xl font-bold'>Prediction: {prediction.toString()}</p>
+                        <p className='text-xl font-bold'>Prediction Class 0: {prediction.prediction_class0 ?? 'N/A' }</p>
+                        <p className='text-xl font-bold'>Prediction Class 1: {prediction.prediction_class1 ?? 'N/A' }</p>
                     </div>
                 )}
             </div>
