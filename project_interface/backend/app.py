@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -18,6 +19,17 @@ else:
     total_features = 20  # Set a default value or raise an error
 
 DEFAULT_VALUE = 888
+
+
+def load_excel_data():
+    try:
+        df = pd.read_excel('newpatientdata.xlsx')
+        if df.empty:
+            raise ValueError("Excel file is empty or not properly formatted.")
+        # Assuming the first row contains the data you want to use
+        return df.iloc[0].to_dict()
+    except Exception as e:
+        raise ValueError(f"Error reading Excel file: {str(e)}")
 
     
 
@@ -36,7 +48,19 @@ def predict():
     # Create an array filled with the default value
     input_data = np.full(total_features, DEFAULT_VALUE)
     
+     # Load data from Excel and populate the input_data array
+    try:
+        excel_data = load_excel_data()
+        feature_name_list = loaded_model.feature_names_in_
+        for feature_name in feature_name_list:
+            if feature_name in excel_data:
+                index = feature_name_list.tolist().index(feature_name)
+                input_data[index] = excel_data[feature_name]
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 500
+    
     # # Set specific features manually using the feature names
+    print("ham",input_data)
     feature_name_list = loaded_model.feature_names_in_
     # print(feature_name_list)
     
@@ -93,7 +117,7 @@ def predict():
     print("Prediction: ", prediction)
     print("Prediction Prob: ", loaded_model.predict_proba(input_data.reshape(1, -1))[0])
     prediction_prob = loaded_model.predict_proba(input_data.reshape(1, -1))[0]
-    return jsonify({'prediction_class0': prediction_prob[0], 'prediction_class1': prediction_prob[1]})
+    return jsonify({'prediction_class0': round(prediction_prob[0]*100,2), 'prediction_class1': round(prediction_prob[1]*100,2)})
     
     # return jsonify({"prediction": data})
 

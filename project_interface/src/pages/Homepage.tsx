@@ -35,8 +35,9 @@ function Homepage() {
 
     const [showShock, setShowShock] = useState<boolean>(false);
     const [prediction, setPrediction] = useState<Prediction>({prediction_class0: 0, prediction_class1: 0});
-    
+    const [showPrediction, setShowPrediction] = useState<boolean>(false);
 
+    
     //  // Calculate total and show shock if total is over the threshold (placeholder for now)
     //  const calculateTotal = () => {
     //     const total = Number(age) + Number(sipa) + Number(hemoglobin) + Number(bloodGiven);
@@ -61,6 +62,8 @@ function Homepage() {
             });
 
             setPrediction(response.data);
+            setShowPrediction(true);
+
             console.log('Prediction:', response.data);
         } catch (error) {
             console.error('Error predicting:', error);
@@ -70,7 +73,7 @@ function Homepage() {
 
   
   return (
-    <div className='h-full w-full flex flex-col items-center justify-between'>
+    <div className='h-full w-full flex flex-col items-center justify-between '>
         <Topbar />
         <div className='h-full w-full flex flex-row items-center justify-evenly p-5'>
             <div className='w-[60%] h-full flex flex-col items-center gap-2'>
@@ -227,11 +230,12 @@ function Homepage() {
                 >
                     Submit
                 </Button>
-
-                {prediction && (
-                    <div className='w-full mt-4'>
-                        <p className='text-xl font-bold'>Prediction Class 0: {prediction.prediction_class0 ?? 'N/A' }</p>
-                        <p className='text-xl font-bold'>Prediction Class 1: {prediction.prediction_class1 ?? 'N/A' }</p>
+                
+                {showPrediction && (
+                    <div className='w-full mt-4 bg-red-500 p-2 flex flex-col justify-center items-center gap-5 rounded-lg font-UnbuntoMono'>
+                        <p className='text-3xl font-bold'>This patient needs surgery!</p>
+                        {/* <p className='text-xl font-bold'>Prediction Class 0: {prediction.prediction_class0 ?? 'N/A' }%</p> */}
+                        <p className='text-xl font-bold'>Prediction Confidence Level: {prediction.prediction_class1 ?? 'N/A' }%</p>
                     </div>
                 )}
             </div>
